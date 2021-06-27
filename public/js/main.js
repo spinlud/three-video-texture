@@ -11,6 +11,7 @@ function getWorldDims() {
 }
 
 function createRoom() {
+    // Texture
     const textureLoader = new THREE.TextureLoader();
     const woodTexture = textureLoader.load('assets/textures/keith-misner-h0Vxgz5tyXA-unsplash.jpg');
     woodTexture.wrapS = THREE.RepeatWrapping;
@@ -20,24 +21,35 @@ function createRoom() {
         side: THREE.BackSide
     });
 
-    const video = document.getElementById('myVideo');
-    const videoTexture = new THREE.VideoTexture(video);
-    videoTexture.needsUpdate = true;
-    const videoMaterial = new THREE.MeshBasicMaterial({
-        map: videoTexture,
+    // First video
+    const video1 = document.getElementById('video1');
+    const videoTexture1 = new THREE.VideoTexture(video1);
+    videoTexture1.needsUpdate = true;
+    const videoMaterial1 = new THREE.MeshBasicMaterial({
+        map: videoTexture1,
         side: THREE.BackSide
     });
-    videoMaterial.needsUpdate = true;
+    videoMaterial1.needsUpdate = true;
+
+    // Second video
+    const video2 = document.getElementById('video2');
+    const videoTexture2 = new THREE.VideoTexture(video2);
+    videoTexture2.needsUpdate = true;
+    const videoMaterial2 = new THREE.MeshBasicMaterial({
+        map: videoTexture2,
+        side: THREE.BackSide
+    });
+    videoMaterial2.needsUpdate = true;
 
     const boxGeometry = new THREE.BoxGeometry(16, 9, 16, 1, 1, 1);
 
     const materials = [
+        videoMaterial2,
         woodMaterial,
         woodMaterial,
         woodMaterial,
         woodMaterial,
-        woodMaterial,
-        videoMaterial,
+        videoMaterial1,
     ];
 
     const room = new THREE.Mesh(boxGeometry, materials);
@@ -71,17 +83,31 @@ function init() {
 
     window.addEventListener('resize', onWindowResize, false);
     window.addEventListener('click', start, false);
+    window.addEventListener('touchend', start, false);
 }
 
 function start() {
-    // Unmute and start video
-    const video = document.getElementById('myVideo');
-    if (video.muted) {
-        video.muted = false;
-    }
+    const videoFiles = [
+        {
+            id: 'video1',
+            unmute: true,
+        },
+        {
+            id: 'video2',
+            unmute: false,
+        },
+    ];
 
-    if (video.paused) {
-        video.play()
+    for (const {id, unmute} of videoFiles) {
+        const video = document.getElementById(id);
+
+        if (video.muted && unmute) {
+            video.muted = false;
+        }
+
+        if (video.paused) {
+            video.play()
+        }
     }
 
     // Remove overlay

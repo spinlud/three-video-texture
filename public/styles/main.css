@@ -10,7 +10,7 @@ html, body {
 body {
     min-height: 100%;
     position: relative;
-    font-family: "Helvetica", "sans-serif";
+    font-family: "Helvetica Neue", "Helvetica", "sans-serif";
     font-style: normal;
     font-weight: normal;
     font-size: 1.2em;
@@ -50,6 +50,7 @@ canvas {
     height: 100vh;
     background: black;
     color: white;
+    font-size: 2em;
     cursor: pointer;
     z-index: 99;
 }
