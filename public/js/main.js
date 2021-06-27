@@ -10,10 +10,10 @@ function getWorldDims() {
     };
 }
 
-function createRoom() {
+async function createRoom() {
     // Texture
     const textureLoader = new THREE.TextureLoader();
-    const woodTexture = textureLoader.load('assets/textures/keith-misner-h0Vxgz5tyXA-unsplash.jpg');
+    const woodTexture = await textureLoader.loadAsync('assets/textures/keith-misner-h0Vxgz5tyXA-unsplash.jpg');
     woodTexture.wrapS = THREE.RepeatWrapping;
     woodTexture.wrapT = THREE.RepeatWrapping;
     const woodMaterial = new THREE.MeshBasicMaterial({
@@ -56,7 +56,7 @@ function createRoom() {
     scene.add(room);
 }
 
-function init() {
+async function init() {
     const world = document.getElementById('world');
     const dims = getWorldDims();
     camera = new THREE.PerspectiveCamera(70, dims.w / dims.h, 0.01, 100);
@@ -84,6 +84,8 @@ function init() {
     window.addEventListener('resize', onWindowResize, false);
     window.addEventListener('click', start, false);
     window.addEventListener('touchend', start, false);
+
+    document.getElementById('overlay').textContent = 'Click anywhere to start!';
 }
 
 function start() {
@@ -126,4 +128,9 @@ function animation(time) {
     renderer.render(scene, camera);
 }
 
-window.onload = init;
+(async () => {
+    window.onload = async () => {
+        await init();
+    };
+})();
+
