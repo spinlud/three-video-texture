@@ -38,3 +38,18 @@ canvas {
     height: 100vh;
     /*background: black;*/
 }
+
+#overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position:absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+    color: white;
+    cursor: pointer;
+    z-index: 99;
+}

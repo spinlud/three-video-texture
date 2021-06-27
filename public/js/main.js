@@ -70,10 +70,11 @@ function init() {
     controls.update();
 
     window.addEventListener('resize', onWindowResize, false);
-    window.addEventListener('click', playVideo, false);
+    window.addEventListener('click', start, false);
 }
 
-function playVideo() {
+function start() {
+    // Unmute and start video
     const video = document.getElementById('myVideo');
     if (video.muted) {
         video.muted = false;
@@ -82,6 +83,9 @@ function playVideo() {
     if (video.paused) {
         video.play()
     }
+
+    // Remove overlay
+    document.getElementById('overlay').style.display = 'none';
 }
 
 function onWindowResize() {
