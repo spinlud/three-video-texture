@@ -1,0 +1,40 @@
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    min-height: 100%;
+    position: relative;
+    font-family: "Helvetica", "sans-serif";
+    font-style: normal;
+    font-weight: normal;
+    font-size: 1.2em;
+}
+
+canvas {
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    outline: none;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
+}
+
+#world {
+    display: block;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /*background: black;*/
+}
