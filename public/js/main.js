@@ -1,5 +1,4 @@
 let camera, scene, renderer;
-let plane, material, texture;
 let controls, axesHelper;
 
 function getWorldDims() {
@@ -11,10 +10,44 @@ function getWorldDims() {
     };
 }
 
+function createRoom() {
+    const textureLoader = new THREE.TextureLoader();
+    const woodTexture = textureLoader.load('assets/textures/keith-misner-h0Vxgz5tyXA-unsplash.jpg');
+    woodTexture.wrapS = THREE.RepeatWrapping;
+    woodTexture.wrapT = THREE.RepeatWrapping;
+    const woodMaterial = new THREE.MeshBasicMaterial({
+        map: woodTexture,
+        side: THREE.BackSide
+    });
+
+    const video = document.getElementById('myVideo');
+    const videoTexture = new THREE.VideoTexture(video);
+    videoTexture.needsUpdate = true;
+    const videoMaterial = new THREE.MeshBasicMaterial({
+        map: videoTexture,
+        side: THREE.BackSide
+    });
+    videoMaterial.needsUpdate = true;
+
+    const boxGeometry = new THREE.BoxGeometry(16, 9, 16, 1, 1, 1);
+
+    const materials = [
+        woodMaterial,
+        woodMaterial,
+        woodMaterial,
+        woodMaterial,
+        woodMaterial,
+        videoMaterial,
+    ];
+
+    const room = new THREE.Mesh(boxGeometry, materials);
+    scene.add(room);
+}
+
 function init() {
     const world = document.getElementById('world');
     const dims = getWorldDims();
-    camera = new THREE.PerspectiveCamera(70, dims.w / dims.h, 0.01, 10);
+    camera = new THREE.PerspectiveCamera(70, dims.w / dims.h, 0.01, 100);
     camera.position.z = 1;
 
     scene = new THREE.Scene();
@@ -23,27 +56,7 @@ function init() {
     axesHelper = new THREE.AxesHelper(100);
     scene.add(axesHelper);
 
-    // const textureLoader = new THREE.TextureLoader();
-    // texture = textureLoader.load('assets/textures/keith-misner-h0Vxgz5tyXA-unsplash.jpg');
-    // console.log(texture);
-    // // // assuming you want the texture to repeat in both directions:
-    // // texture.wrapS = THREE.RepeatWrapping;
-    // // texture.wrapT = THREE.RepeatWrapping;
-    // material = new THREE.MeshBasicMaterial({ map : texture });
-    // plane = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), material);
-    // plane.material.side = THREE.DoubleSide;
-    // // plane.position.x = 100;
-    // plane.rotation.z = Math.PI / 2;
-    // scene.add(plane)
-
-    const video = document.getElementById('myVideo');
-    texture = new THREE.VideoTexture(video);
-    texture.needsUpdate = true;
-    material = new THREE.MeshBasicMaterial({map: texture, side: THREE.FrontSide});
-    material.needsUpdate = true;
-    plane = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), material);
-    plane.rotation.z = Math.PI / 2;
-    scene.add(plane)
+    createRoom();
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -51,8 +64,10 @@ function init() {
     world.appendChild(renderer.domElement);
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
-    // controls.minDistance = 0.5;
-    // controls.maxDistance = 2;
+    controls.minDistance = 0.1;
+    controls.maxDistance = 20;
+    camera.position.set(0, 0, 10);
+    controls.update();
 
     window.addEventListener('resize', onWindowResize, false);
     window.addEventListener('click', playVideo, false);
