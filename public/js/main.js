@@ -10,15 +10,40 @@ function getWorldDims() {
     };
 }
 
+function addLights() {
+    // const ambientColor = 0xFFFFFF;
+    const ambientColor = 0x81acf0;
+    const ambientLight = new THREE.AmbientLight(ambientColor, 0.4);
+    scene.add(ambientLight);
+
+    const pointLight1 = new THREE.PointLight(ambientColor, 1.1);
+    pointLight1.position.set(0, 0, 0);
+    scene.add(pointLight1);
+
+    // const pointLightHelper = new THREE.PointLightHelper(pointLight1);
+    // scene.add(pointLightHelper);
+}
+
 async function createRoom() {
-    // Texture
     const textureLoader = new THREE.TextureLoader();
-    const woodTexture = await textureLoader.loadAsync('assets/textures/keith-misner-h0Vxgz5tyXA-unsplash.jpg');
-    woodTexture.wrapS = THREE.RepeatWrapping;
-    woodTexture.wrapT = THREE.RepeatWrapping;
-    const woodMaterial = new THREE.MeshBasicMaterial({
-        map: woodTexture,
-        side: THREE.BackSide
+
+    // // Texture
+    // const woodTexture = await textureLoader.loadAsync('assets/textures/keith-misner-h0Vxgz5tyXA-unsplash.jpg');
+    // woodTexture.wrapS = THREE.RepeatWrapping;
+    // woodTexture.wrapT = THREE.RepeatWrapping;
+    // const woodMaterial = new THREE.MeshBasicMaterial({
+    //     map: woodTexture,
+    //     side: THREE.BackSide
+    // });
+
+    // Concrete
+    const standardMaterial = new THREE.MeshStandardMaterial({
+        aoMap: await textureLoader.loadAsync('assets/textures/concrete/007/Concrete_Blocks_007_ambientOcclusion.jpg'),
+        map: await textureLoader.loadAsync('assets/textures/concrete/007/Concrete_Blocks_007_basecolor.jpg'),
+        // normalMap: await textureLoader.loadAsync('assets/textures/concrete/007/Concrete_Blocks_007_height.png'),
+        roughnessMap: await textureLoader.loadAsync('assets/textures/concrete/007/Concrete_Blocks_007_roughness.jpg'),
+        metalness: 0.5,
+        side: THREE.BackSide,
     });
 
     // First video
@@ -45,10 +70,10 @@ async function createRoom() {
 
     const materials = [
         videoMaterial2,
-        woodMaterial,
-        woodMaterial,
-        woodMaterial,
-        woodMaterial,
+        standardMaterial,
+        standardMaterial,
+        standardMaterial,
+        standardMaterial,
         videoMaterial1,
     ];
 
@@ -65,10 +90,11 @@ async function init() {
     scene = new THREE.Scene();
     scene.position.set(0, 0, 0);
 
-    axesHelper = new THREE.AxesHelper(100);
-    scene.add(axesHelper);
+    // axesHelper = new THREE.AxesHelper(100);
+    // scene.add(axesHelper);
 
-    createRoom();
+    await createRoom();
+    addLights();
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -82,10 +108,11 @@ async function init() {
     controls.update();
 
     window.addEventListener('resize', onWindowResize, false);
-    window.addEventListener('click', start, false);
-    window.addEventListener('touchend', start, false);
 
-    document.getElementById('overlay').textContent = 'Click anywhere to start!';
+    const overlay = document.getElementById('overlay');
+    overlay.addEventListener('click', start, false);
+    overlay.addEventListener('touchend', start, false);
+    overlay.textContent = 'Click anywhere to start!';
 }
 
 function start() {
@@ -112,8 +139,11 @@ function start() {
         }
     }
 
-    // Remove overlay
-    document.getElementById('overlay').style.display = 'none';
+    // Disable overlay
+    const overlay = document.getElementById('overlay');
+    overlay.removeEventListener('click', start);
+    overlay.removeEventListener('touchend', start);
+    overlay.style.display = 'none';
 }
 
 function onWindowResize() {
