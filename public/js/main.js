@@ -1,5 +1,6 @@
 let camera, scene, renderer;
 let controls, axesHelper;
+let vrButton;
 
 function getWorldDims() {
     const world = document.getElementById('world');
@@ -98,8 +99,6 @@ async function init() {
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setAnimationLoop(animation);
-    world.appendChild(renderer.domElement);
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.minDistance = 0.1;
@@ -109,13 +108,30 @@ async function init() {
 
     window.addEventListener('resize', onWindowResize, false);
 
+    const isSupportedVR = await THREE.VRButton.isSupportedVR();
+    console.log('isSupportedVR', isSupportedVR);
     const overlay = document.getElementById('overlay');
-    overlay.addEventListener('click', start, false);
-    overlay.addEventListener('touchend', start, false);
-    overlay.textContent = 'Click anywhere to start!';
+
+    if (isSupportedVR) {
+        renderer.xr.enabled = true;
+        vrButton = THREE.VRButton.createButton(renderer);
+        vrButton.addEventListener('click', start, false);
+        document.body.appendChild(vrButton);
+        overlay.textContent = 'Ready';
+    }
+    else {
+        overlay.addEventListener('click', start, false);
+        overlay.addEventListener('touchend', start, false);
+        overlay.textContent = 'Click anywhere to start!';
+    }
+
+    renderer.setAnimationLoop(animation);
+    world.appendChild(renderer.domElement);
 }
 
 function start() {
+    console.log('start!');
+
     const videoFiles = [
         {
             id: 'video1',
@@ -139,10 +155,14 @@ function start() {
         }
     }
 
-    // Disable overlay
     const overlay = document.getElementById('overlay');
-    overlay.removeEventListener('click', start);
-    overlay.removeEventListener('touchend', start);
+
+    // Remove event listeners
+    // overlay.removeEventListener('click', start);
+    // overlay.removeEventListener('touchend', start);
+    // vrButton && vrButton.removeEventListener('click', start);
+
+    // Hide overlay
     overlay.style.display = 'none';
 }
 
