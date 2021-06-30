@@ -6,16 +6,18 @@ const favicon = require('express-favicon');
 const app = express();
 const port = process.env.PORT ? parseInt(process.env.PORT) : 8080;
 
-// Https redirect
-app.use((req, res, next) => {
-    if (!req.secure) {
-        const redirectTo = 'https://' + req.headers.host.split(':')[0] + req.url;
-        console.log(redirectTo);
-        return res.redirect(redirectTo);
-    }
+// Https redirect only for local dev (not needed on Heroku)
+if (!process.env.PORT) {
+    app.use((req, res, next) => {
+        if (!req.secure) {
+            const redirectTo = 'https://' + req.headers.host.split(':')[0] + req.url;
+            console.log(redirectTo);
+            return res.redirect(redirectTo);
+        }
 
-    return next();
-});
+        return next();
+    });
+}
 
 app.use(express.json());
 app.use(express.static('public'));
