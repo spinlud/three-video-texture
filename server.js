@@ -26,15 +26,15 @@ app.get('/', (req, res) => {
     return res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-const key = fs.readFileSync(path.join(__dirname, 'https', 'key.pem'));
-const cert = fs.readFileSync(path.join(__dirname, 'https', 'cert.pem'));
-
 app.listen(port, () => {
     console.log(`Server listening on port ${port}...`);
 });
 
-// Only for local development
+// Only for local development (VR requires https)
 if (!process.env.PORT) {
+    const key = fs.readFileSync(path.join(__dirname, 'https', 'key.pem'));
+    const cert = fs.readFileSync(path.join(__dirname, 'https', 'cert.pem'));
+
     https.createServer({key: key, cert: cert}, app).listen(443, () => {
         console.log(`Local https server listening on port 443...`);
     });
